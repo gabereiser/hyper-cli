@@ -7,14 +7,18 @@ package hyper_cli
 
 import (
 	"bufio"
+	"bytes"
 	"embed"
 	"fmt"
+	"github.com/briandowns/spinner"
+	"io"
 	"io/fs"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 //go:embed all:template
@@ -26,7 +30,14 @@ type HyperEngine struct {
 	Configuration HyperConfiguration
 }
 
+var s *spinner.Spinner
+
 func NewHyperEngine(configuration HyperConfiguration) *HyperEngine {
+	s = spinner.New(spinner.CharSets[11], 100*time.Millisecond)
+	s.Start()
+	s.Stop()
+	s.FinalMSG = "Complete"
+	s.HideCursor = true
 	return &HyperEngine{
 		Assets:        make(map[string]string),
 		Configuration: configuration,
@@ -82,43 +93,66 @@ func run_cmd(path string, cmd string, args ...string) string {
 	}
 	return string(out)
 }
+func run_cmd_error(path string, cmd string, args ...string) string {
+	exe := exec.Command(cmd, args...)
+	exe.Dir = path
+	out, err := exe.StdoutPipe()
+	if err != nil {
+		log.Printf("[ERROR] %v", err)
+	}
+	buf := new(bytes.Buffer)
+	exe.Run()
+	_, _ = io.Copy(buf, out)
+	return buf.String()
+}
 func (h *HyperEngine) NewProject(name string) error {
+	s.Suffix = " New Hyper Pipeline"
+	s.Start()
 	dir, _ := os.Getwd()
 	if name != "." {
 		_ = os.MkdirAll(name, 0644)
 		dir = filepath.Join(dir, name)
 	}
 	run_cmd(dir, "git", "init")
-	out := run_cmd(dir, "npm", "init", "-y")
-	out = out + run_cmd(dir, "npm", "i", "vite@latest", "mdb-ui-kit@latest", "sass")
+	out := run_cmd_error(dir, "npm", "init", "-y")
+	out = out + run_cmd_error(dir, "npm", "i", "vite@latest", "mdb-ui-kit@latest", "sass")
 	WriteAssets(dir)
 	fmt.Println(out)
+	s.Stop()
 	return nil
 }
 func Install(args ...string) {
+	s.Suffix = " Package Installation"
+	s.Start()
 	dir, _ := os.Getwd()
-	fmt.Println(run_cmd(dir, "npm", args...))
+	fmt.Println(run_cmd_error(dir, "npm", args...))
+	s.Stop()
 }
 func (h *HyperEngine) Build() error {
+	s.Suffix = " Compilation"
+	s.Start()
 	dir, _ := os.Getwd()
 	outDir := fmt.Sprintf("--outDir=%s", filepath.Join(dir, h.Configuration.OutputDir))
-	out := run_cmd(dir, "npx", "vite", "build", "--emptyOutDir", outDir)
+	out := run_cmd_error(dir, "npx", "vite", "build", "--emptyOutDir", outDir)
+	s.Stop()
 	fmt.Println(out)
 	return nil
 }
 
 func (h *HyperEngine) Serve() error {
+	fmt.Println("Starting Service")
 	e := h.Build()
 	if e != nil {
 		return e
 	}
 	cmd := exec.Command("npx", "vite", "preview", "--port", fmt.Sprintf("%d", h.Configuration.DevPort))
-	stdout, _ := cmd.StdoutPipe()
+	stdout, _ := cmd.StderrPipe()
 	e = cmd.Start()
 	if e != nil {
 		return e
 	}
-
+	fmt.Println("HyperNet Active: http://locahost:8080")
+	fmt.Println("")
 	scanner := bufio.NewScanner(stdout)
 	for scanner.Scan() {
 		m := scanner.Text()

@@ -1,4 +1,4 @@
-version:=v0.1.0
+version:=$(shell git rev-parse)
 
 all: clean dep compile
 
