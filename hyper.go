@@ -145,7 +145,7 @@ func (h *HyperEngine) Serve() error {
 	if e != nil {
 		return e
 	}
-	cmd := exec.Command("npx", "vite", "preview", "--port", fmt.Sprintf("%d", h.Configuration.DevPort))
+	cmd := exec.Command("npx", "vite", "--port", fmt.Sprintf("%d", h.Configuration.DevPort))
 	stdout, _ := cmd.StderrPipe()
 	e = cmd.Start()
 	if e != nil {
