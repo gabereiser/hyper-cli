@@ -151,7 +151,7 @@ func (h *HyperEngine) Serve() error {
 	if e != nil {
 		return e
 	}
-	fmt.Println("HyperNet Active: http://locahost:8080")
+	fmt.Println("HyperNet Active: http://localhost:8080")
 	fmt.Println("")
 	scanner := bufio.NewScanner(stdout)
 	for scanner.Scan() {
