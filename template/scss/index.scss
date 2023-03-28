@@ -1,0 +1,41 @@
+@import "node_modules/mdb-ui-kit/src/scss/mdb.free.scss";
+
+:root {
+  --color-bg: #fff;
+  --color-fg: #000;
+  color-scheme: light dark;
+}
+
+@media(prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #000;
+    --color-fg: #fff;
+  }
+}
+
+html {
+  background-color: var(--color-bg);
+}
+
+.logo {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -10vh;
+  margin-left: -10vw;
+  font-size: 3em;
+  color: goldenrod;
+  transition: color 350ms ease-in-out;
+  animation: 5s ease-in-out 1s infinite alternate-reverse both running pulse;
+}
+
+@keyframes pulse {
+  from {
+    color: darkgoldenrod;
+    text-shadow: 0 0 5px darkgoldenrod;
+  }
+  to {
+    color: gold;
+    text-shadow: 0 0 15px gold;
+  }
+}
