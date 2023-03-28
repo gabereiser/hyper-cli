@@ -86,6 +86,7 @@ func init() {
 		fmt.Println("-----------------------------")
 		fmt.Println("\tinit [dir]\tInits a new project")
 		fmt.Println("\tbuild\t\tBuilds the current project.")
+		fmt.Println("\tinstall [args]\tInstalls project dependencies. You can add them by supplying args ['express sequelize react']")
 		fmt.Println("\tserve\t\tServes the current project for development.")
 		fmt.Println("\thelp\t\tthis help message.")
 		flag.PrintDefaults()

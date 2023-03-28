@@ -24,11 +24,13 @@ Usage: hyper [command]
 -----------------------------
         init [dir]      Inits a new project
         build           Builds the current project.
+        install [args]  Installs dependencies
         serve           Serves the current project for development.
         help            this help message.
 ```
 * init [dir] will initialize a new project at the directory specified.
 * build will build the project in the current directory.
+* install will install any project dependencies. You can add them by giving it arguments.
 * serve will provide a HMR-capable dev server for quick prototyping.
 * help is redundant at this point. 
 ### Build
