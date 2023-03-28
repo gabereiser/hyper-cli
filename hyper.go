@@ -77,8 +77,8 @@ func WriteAssets(path string) {
 		file = strings.TrimPrefix(file, "template/")
 		p := filepath.Join(path, file)
 		folder := filepath.Dir(p)
-		_ = os.MkdirAll(folder, 0644)
-		err := os.WriteFile(p, data, 0644)
+		_ = os.MkdirAll(folder, 0755)
+		err := os.WriteFile(p, data, 0755)
 		if err != nil {
 			panic(fmt.Errorf("[ERROR] %v", err))
 		}
@@ -110,7 +110,7 @@ func (h *HyperEngine) NewProject(name string) error {
 	s.Start()
 	dir, _ := os.Getwd()
 	if name != "." {
-		_ = os.MkdirAll(name, 0644)
+		_ = os.MkdirAll(name, 0755)
 		dir = filepath.Join(dir, name)
 	}
 	run_cmd(dir, "git", "init")
